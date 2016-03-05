@@ -209,3 +209,6 @@ FakesAssemblies/
 
 # FAKE build folder
 .fake/
+.svn/entries
+.svn/format
+.svn/wc.db
