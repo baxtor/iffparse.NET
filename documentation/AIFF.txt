@@ -1,0 +1,1151 @@
+Next Previous Contents
+11. File Formats.
+
+Here are some more detailed pieces of info that I received by e-mail. They are reproduced here virtually without much editing.
+
+11.1 AIFF Format (Audio IFF) and AIFC.
+
+This format was developed by Apple for storing high-quality sampled sound and musical instrument info; it is also used by SGI and several professional audio packages (sorry, I know no names). An extension, called AIFC or AIFF-C, supports compression (see below). The specification is very long and allows for lots of different features. It is beyond the scope of this FAQ to list its format here but there are pointers listed below for further information.
+
+If someone would like to make a short sumary of the file format for simple linear data type I would be happy to place it here.
+
+There is a BinHex'ed MacWrite version of the AIFF spec available by anonymous ftp at ftp://ftp.cwi.nl/pub/audio/AudioIFF1.3.hqx. But you may be better off with the AIFF-C specs, see below.
+
+I have made avaliable a text version of the AIFF-C specification on my web page at http://www.cnpbagwell.com/aiff-c.txt and a postscript version is available from ftp://ftp.sgi.com/sgi/aiff-c.9.26.91.ps.Z.
+
+11.2 The NeXT/Sun audio file format.
+
+Here's the complete story on the file format, from the NeXT documentation. (Note that the "magic" number is ((int)0x2e736e64), which equals ".snd".) Also, at the end, I've added a litte document that someone posted to the net a couple of years ago, that describes the format in a bit-by-bit fashion rather than from C.
+
+I received this from Doug Keislar, NeXT Computer. This is also the Sun format, except that Sun doesn't recognize as many format codes. I added the numeric codes to the table of formats and sorted it.
+
+SNDSoundStruct: How a NeXT Computer Represents Sound
+
+The NeXT sound software defines the SNDSoundStruct structure to represent sound. This structure defines the soundfile and Mach-O sound segment formats and the sound pasteboard type. It's also used to describe sounds in Interface Builder. In addition, each instance of the Sound Kit's Sound class encapsulates a SNDSoundStruct and provides methods to access and modify its attributes.
+
+Basic sound operations, such as playing, recording, and cut-and-paste editing, are most easily performed by a Sound object. In many cases, the Sound Kit obviates the need for in-depth understanding of the SNDSoundStruct architecture. For example, if you simply want to incorporate sound effects into an application, or to provide a simple graphic sound editor (such as the one in the Mail application), you needn't be aware of the details of the SNDSoundStruct. However, if you want to closely examine or manipulate sound data you should be familiar with this structure.
+
+The SNDSoundStruct contains a header, information that describes the attributes of a sound, followed by the data (usually samples) that represents the sound. The structure is defined (in sound/soundstruct.h) as:
+
+ typedef struct {
+    int magic;               /* magic number SND_MAGIC */
+    int dataLocation;        /* offset or pointer to the data */
+    int dataSize;            /* number of bytes of data */
+    int dataFormat;          /* the data format code */
+    int samplingRate;        /* the sampling rate */
+    int channelCount;        /* the number of channels */
+    char info[4];            /* optional text information */
+} SNDSoundStruct;
+SNDSoundStruct Fields
+
+magic
+magic is a magic number that's used to identify the structure as a SNDSoundStruct. Keep in mind that the structure also defines the soundfile and Mach-O sound segment formats, so the magic number is also used to identify these entities as containing a sound.
+
+dataLocation
+It was mentioned above that the SNDSoundStruct contains a header followed by sound data. In reality, the structure only contains the header; the data itself is external to, although usually contiguous with, the structure. (Nonetheless, it's often useful to speak of the SNDSoundStruct as the header and the data.) dataLocation is used to point to the data. Usually, this value is an offset (in bytes) from the beginning of the SNDSoundStruct to the first byte of sound data. The data, in this case, immediately follows the structure, so dataLocation can also be thought of as the size of the structure's header. The other use of dataLocation, as an address that locates data that isn't contiguous with the structure, is described in "Format Codes," below.
+
+dataSize
+It is its size in bytes (not including the size of the SNDSoundStruct).
+
+dataFormat
+It is a code that identifies the type of sound. For sampled sounds, this is the quantization format. However, the data can also be instructions for synthesizing a sound on the DSP. The codes are listed and explained in "Format Codes," below.
+
+samplingRate
+It is the sampling rate (if the data is samples). Three sampling rates, represented as integer constants, are supported by the hardware:
+
+ Constant        Sampling Rate (samples/sec) 
+
+SND_RATE_CODEC  8012.821        (CODEC input)
+SND_RATE_LOW    22050.0 (low sampling rate output)
+SND_RATE_HIGH   44100.0 (high sampling rate output)
+channelCount
+It is the number of channels of sampled sound.
+
+info
+info is a NULL-terminated string that you can supply to provide a textual description of the sound. The size of the info field is set when the structure is created and thereafter can't be enlarged. It's at least four bytes long (even if it's unused).
+
+Format Codes
+
+A sound's format is represented as a positive 32-bit integer. NeXT reserves the integers 0 through 255; you can define your own format and represent it with an integer greater than 255. Most of the formats defined by NeXT describe the amplitude quantization of sampled sound data:
+
+ Value   Code    Format 
+
+0       SND_FORMAT_UNSPECIFIED  unspecified format 
+1       SND_FORMAT_MULAW_8      8-bit mu-law samples
+2       SND_FORMAT_LINEAR_8     8-bit linear samples
+3       SND_FORMAT_LINEAR_16    16-bit linear samples
+4       SND_FORMAT_LINEAR_24    24-bit linear samples
+5       SND_FORMAT_LINEAR_32    32-bit linear samples
+6       SND_FORMAT_FLOAT        floating-point samples
+7       SND_FORMAT_DOUBLE       double-precision float samples
+8       SND_FORMAT_INDIRECT     fragmented sampled data
+9       SND_FORMAT_NESTED       ?
+10      SND_FORMAT_DSP_CORE     DSP program
+11      SND_FORMAT_DSP_DATA_8   8-bit fixed-point samples
+12      SND_FORMAT_DSP_DATA_16  16-bit fixed-point samples
+13      SND_FORMAT_DSP_DATA_24  24-bit fixed-point samples
+14      SND_FORMAT_DSP_DATA_32  32-bit fixed-point samples
+15      ?
+16      SND_FORMAT_DISPLAY      non-audio display data
+17      SND_FORMAT_MULAW_SQUELCH        ?
+18      SND_FORMAT_EMPHASIZED   16-bit linear with emphasis
+19      SND_FORMAT_COMPRESSED   16-bit linear with compression
+20      SND_FORMAT_COMPRESSED_EMPHASIZED        A combination of the two above
+21      SND_FORMAT_DSP_COMMANDS Music Kit DSP commands
+22      SND_FORMAT_DSP_COMMANDS_SAMPLES         ?
+[Some new ones supported by Sun.  This is all I currently know. --GvR]
+23      SND_FORMAT_ADPCM_G721
+24      SND_FORMAT_ADPCM_G722
+25      SND_FORMAT_ADPCM_G723_3
+26      SND_FORMAT_ADPCM_G723_5
+27      SND_FORMAT_ALAW_8
+Most formats identify different sizes and types of sampled data. Some deserve special note:
+
+SND_FORMAT_DSP_CORE
+format contains data that represents a loadable DSP core program. Sounds in this format are required by the SNDBootDSP() and SNDRunDSP() functions. You create a SND_FORMAT_DSP_CORE sound by reading a DSP load file (extension ".lod") with the SNDReadDSPfile() function.
+
+SND_FORMAT_DSP_COMMANDS
+is used to distinguish sounds that contain DSP commands created by the Music Kit. Sounds in this format can only be created through the Music Kit's Orchestra class, but can be played back through the SNDStartPlaying() function.
+
+SND_FORMAT_DISPLAY
+format is used by the Sound Kit's SoundView class. Such sounds can't be played.
+
+SND_FORMAT_INDIRECT
+indicates data that has become fragmented, as described in a separate section, below.
+
+SND_FORMAT_UNSPECIFIED
+is used for unrecognized formats.
+
+Fragmented Sound Data
+
+Sound data is usually stored in a contiguous block of memory. However, when sampled sound data is edited (such that a portion of the sound is deleted or a portion inserted), the data may become discontiguous, or fragmented. Each fragment of data is given its own SNDSoundStruct header; thus, each fragment becomes a separate SNDSoundStruct structure. The addresses of these new structures are collected into a contiguous, NULL-terminated block; the dataLocation field of the original SNDSoundStruct is set to the address of this block, while the original format, sampling rate, and channel count are copied into the new SNDSoundStructs.
+
+Fragmentation serves one purpose: It avoids the high cost of moving data when the sound is edited. Playback of a fragmented sound is transparent-you never need to know whether the sound is fragmented before playing it. However, playback of a heavily fragmented sound is less efficient than that of a contiguous sound. The SNDCompactSamples() C function can be used to compact fragmented sound data.
+
+Sampled sound data is naturally unfragmented. A sound that's freshly recorded or retrieved from a soundfile, the Mach-O segment, or the pasteboard won't be fragmented. Keep in mind that only sampled data can become fragmented.
+
+ >From mentor.cc.purdue.edu!purdue!decwrl!ucbvax!ziploc!eps Wed Apr  4  
+23:56:23 EST 1990
+Article 5779 of comp.sys.next:
+Path: mentor.cc.purdue.edu!purdue!decwrl!ucbvax!ziploc!eps
+>From: eps@toaster.SFSU.EDU (Eric P. Scott)
+Newsgroups: comp.sys.next
+Subject: Re: Format of NeXT sndfile headers?
+Message-ID: <445@toaster.SFSU.EDU>
+Date: 31 Mar 90 21:36:17 GMT
+References: <14978@phoenix.Princeton.EDU>
+Reply-To: eps@cs.SFSU.EDU (Eric P. Scott)
+Organization: San Francisco State University
+Lines: 42
+
+In article <14978@phoenix.Princeton.EDU>
+        bskendig@phoenix.Princeton.EDU (Brian Kendig) writes:
+>I'd like to take a program I have that converts Macintosh sound  
+files
+>to NeXT sndfiles and polish it up a bit to go the other direction as
+>well.
+
+Two people have already submitted programs that do this
+(Christopher Lane and Robert Hood); check the various
+NeXT archive sites.
+
+>       Could someone please give me the format of a NeXT sndfile
+>header?
+
+"big-endian"
+        0       1       2       3
+        +-------+-------+-------+-------+
+0       | 0x2e  | 0x73  | 0x6e  | 0x64  |       "magic" number
+        +-------+-------+-------+-------+
+4       |                               |       data location
+        +-------+-------+-------+-------+
+8       |                               |       data size
+        +-------+-------+-------+-------+
+12      |                               |       data format (enum)
+        +-------+-------+-------+-------+
+16      |                               |       sampling rate (int)
+        +-------+-------+-------+-------+
+20      |                               |       channel count
+        +-------+-------+-------+-------+
+24      |       |       |       |       |       (optional) info  
+string
+
+28 = minimum value for data location
+
+data format values can be found in /usr/include/sound/soundstruct.h
+
+Most common combinations:
+
+         sampling  channel    data
+             rate    count  format              
+voice file   8012        1       1 =  8-bit mu-law
+system beep 22050        2       3 = 16-bit linear
+CD-quality  44100        2       3 = 16-bit linear
+11.3 IFF/8SVX Format.
+
+The following email describes the IFF/8SVX format:
+
+ Newsgroups: alt.binaries.sounds.d,alt.sex.sounds
+Subject: Format of the IFF header (Amiga sounds)
+Message-ID: <2509@tardis.Tymnet.COM>
+>From: jms@tardis.Tymnet.COM (Joe Smith)
+Date: 23 Oct 91 23:54:38 GMT
+Followup-To: alt.binaries.sounds.d
+Organization: BT North America (Tymnet)
+
+The first 12 bytes of an IFF file are used to distinguish between an Amiga
+picture (FORM-ILBM), an Amiga sound sample (FORM-8SVX), or other file
+conforming to the IFF specification.  The middle 4 bytes is the count of
+bytes that follow the "FORM" and byte count longwords.  (Numbers are stored
+in M68000 form, high order byte first.)
+
+                ------------------------------------------
+
+FutureSound audio file, 15000 samples at 10.000KHz, file is 15048 bytes long.
+
+0000: 464F524D 00003AC0 38535658 56484452    FORM..:.8SVXVHDR
+      F O R M     15040 8 S V X  V H D R
+0010: 00000014 00003A98 00000000 00000000    ......:.........
+            20    15000        0        0
+0020: 27100100 00010000 424F4459 00003A98    '.......BODY..:.
+     10000 1 0    1.0   B O D Y     15000
+
+0000000..03 = "FORM", identifies this as an IFF format file.
+FORM+00..03 (ULONG) = number of bytes that follow.  (Unsigned long int.)
+FORM+03..07 = "8SVX", identifies this as an 8-bit sampled voice.
+
+????+00..03 = "VHDR", Voice8Header, describes the parameters for the BODY.
+VHDR+00..03 (ULONG) = number of bytes to follow. 
+VHDR+04..07 (ULONG) = samples in the high octave 1-shot part.
+VHDR+08..0B (ULONG) = samples in the high octave repeat part.
+VHDR+0C..0F (ULONG) = samples per cycle in high octave (if repeating), else 0.
+VHDR+10..11 (UWORD) = samples per second.  (Unsigned 16-bit quantity.)
+VHDR+12     (UBYTE) = number of octaves of waveforms in sample.
+VHDR+13     (UBYTE) = data compression (0=none, 1=Fibonacci-delta encoding).
+VHDR+14..17 (FIXED) = volume.  (The number 65536 means 1.0 or full volume.)
+
+????+00..03 = "BODY", identifies the start of the audio data.
+BODY+00..03 (ULONG) = number of bytes to follow.
+BODY+04..NNNNN      = Data, signed bytes, from -128 to +127.
+
+0030: 04030201 02030303 04050605 05060605
+0040: 06080806 07060505 04020202 01FF0000
+0050: 00000000 FF00FFFF FFFEFDFD FDFEFFFF
+0060: FDFDFF00 00FFFFFF 00000000 00FFFF00
+0070: 00000000 00FF0000 00FFFEFF 00000000
+0080: 00010000 000101FF FF0000FE FEFFFFFE
+0090: FDFDFEFD FDFFFFFC FDFEFDFD FEFFFEFE
+00A0: FFFEFEFE FEFEFEFF FFFFFEFF 00FFFF01
+
+This small section of the audio sample shows the number ranging from -5 (0xFD)
+to +8 (0x08).  Warning: Do not assume that the BODY starts 48 bytes into the
+file.  In addition to "VHDR", chunks labeled "NAME", "AUTH", "ANNO", or 
+"(c) " may be present, and may be in any order.  You will have to check the
+byte count in each chunk to determine how many bytes to skip.
+11.4 US Federal Standard 1016 availability.
+
+>From: jpcampb@afterlife.ncsc.mil (Joe Campbell)
+
+The U.S. DoD's Federal-Standard-1016 based 4800 bps code excited linear prediction voice coder version 3.2 (CELP 3.2) Fortran and C simulation source codes are available for worldwide distribution (on DOS diskettes, but configured to compile on Sun SPARC stations) from NTIS and DTIC. Example input and processed speech files are included. A Technical Information Bulletin (TIB), "Details to Assist in Implementation of Federal Standard 1016 CELP," and the official standard, "Federal Standard 1016, Telecommunications: Analog to Digital Conversion of Radio Voice by 4,800 bit/second Code Excited Linear Prediction (CELP)," are also available.
+
+This is available through the National Technical Information Service:
+
+ NTIS
+U.S. Department of Commerce
+5285 Port Royal Road
+Springfield, VA  22161
+USA
+(703) 487-4650
+The "AD" ordering number for the CELP software is AD M000 118 (US$ 90.00) and for the TIB it's AD A256 629 (US$ 17.50). The LPC-10 standard, described below, is FIPS Pub 137 (US$ 12.50). There is a $3.00 shipping charge on all U.S. orders. The telephone number for their automated system is 703-487-4650, or 703-487-4600 if you'd prefer to talk with a real person.
+
+(U.S. DoD personnel and contractors can receive the package from the Defense Technical Information Center: DTIC, Building 5, Cameron Station, Alexandria, VA 22304-6145. Their telephone number is 703-274-7633.)
+
+The following articles describe the Federal-Standard-1016 4.8-kbps CELP coder (it's unnecessary to read more than one):
+
+Campbell, Joseph P. Jr., Thomas E. Tremain and Vanoy C. Welch, "The Federal Standard 1016 4800 bps CELP Voice Coder," Digital Signal Processing, Academic Press, 1991, Vol. 1, No. 3, p. 145-155.
+
+Campbell, Joseph P. Jr., Thomas E. Tremain and Vanoy C. Welch, "The DoD 4.8 kbps Standard (Proposed Federal Standard 1016)," in Advances in Speech Coding, ed. Atal, Cuperman and Gersho, Kluwer Academic Publishers, 1991, Chapter 12, p. 121-133.
+
+Campbell, Joseph P. Jr., Thomas E. Tremain and Vanoy C. Welch, "The Proposed Federal Standard 1016 4800 bps Voice Coder: CELP," Speech Technology Magazine, April/May 1990, p. 58-64.
+
+The U.S. DoD's Federal-Standard-1015/NATO-STANAG-4198 based 2400 bps linear prediction coder (LPC-10) was republished as a Federal Information Processing Standards Publication 137 (FIPS Pub 137). It is described in:
+
+Thomas E. Tremain, "The Government Standard Linear Predictive Coding Algorithm: LPC-10," Speech Technology Magazine, April 1982, p. 40-49.
+
+There is also a section about FS-1015 in the book: Panos E. Papamichalis, Practical Approaches to Speech Coding, Prentice-Hall, 1987.
+
+The voicing classifier used in the enhanced LPC-10 (LPC-10e) is described in: Campbell, Joseph P., Jr. and T. E. Tremain, "Voiced/Unvoiced Classification of Speech with Applications to the U.S. Government LPC-10E Algorithm," Proceedings of the IEEE International Conference on Acoustics, Speech, and Signal Processing, 1986, p. 473-6.
+
+Copies of the official standard "Federal Standard 1016, Telecommunications: Analog to Digital Conversion of Radio Voice by 4,800 bit/second Code Excited Linear Prediction (CELP)" are available for US$ 5.00 each from:
+
+ GSA Federal Supply Service Bureau
+Specification Section, Suite 8100
+470 E. L'Enfant Place, S.W.
+Washington, DC  20407
+(202)755-0325
+Realtime DSP code for FS-1015 and FS-1016 is sold by:
+
+ John DellaMorte
+DSP Software Engineering
+165 Middlesex Tpk, Suite 206
+Bedford, MA  01730
+USA
+1-617-275-3733
+1-617-275-4323 (fax)
+dspse.bedford@channel1.com
+DSP Software Engineering's FS-1016 code can run on a DSP Research's Tiger 30 (a PC board with a TMS320C3x and analog interface suited to development work).
+
+ DSP Research                
+1095 E. Duane Ave.          
+Sunnyvale, CA  94086        
+USA
+(408)773-1042               
+(408)736-3451 (fax)         
+ From: tobiasr@monolith.lrmsc.loral.com (Richard Tobias)
+
+For U.S. FED-STD-1016 (4800 bps CELP) _realtime_ DSP code and
+information about products using this code using the AT&T DSP32C and
+AT&T DSP3210, contact:
+
+White Eagle Systems Technology, Inc.
+1123 Queensbridge Way
+San Jose, CA 95120
+(408) 997-2706
+(408) 997-3584 (fax)
+rjjt@netcom.com
+
+From: Cole Erskine <cole@analogical.com>
+
+[paraphrased]
+
+Analogical Systems has a _real-time_ multirate implementation of U.S.
+Federal Standard 1016 CELP operating at bit rates of 4800, 7200, and
+9600 bps on a single 27MHz Motorola DSP56001. Source and object code
+is available for a one-time license fee.
+
+FREE, _real-time_ demonstration software for the Ariel PC-56D is
+available for those who already have such a board by contacting
+Analogical Systems.  The demo software allows you to record and
+playback CELP files to and from the PC's hard disk.
+
+Analogical Systems
+2916 Ramona Street
+Palo Alto, CA 94306
+Tel: +1 (415) 323-3232
+FAX: +1 (415) 323-4222
+11.5 Creative Voice (VOC) file format.
+
+Creative Voice (VOC) file format.
+
+ >From: galt@dsd.es.com
+
+(byte numbers are hex!)
+
+    HEADER (bytes 00-19)
+    Series of DATA BLOCKS (bytes 1A+) [Must end w/ Terminator Block]
+
+- ---------------------------------------------------------------
+
+HEADER:
+-------
+     byte #     Description
+     ------     ------------------------------------------
+     00-12      "Creative Voice File"
+     13         1A (eof to abort printing of file)
+     14-15      Offset of first datablock in .voc file (std 1A 00
+                in Intel Notation)
+     16-17      Version number (minor,major) (VOC-HDR puts 0A 01)
+     18-19      2's Comp of Ver. # + 1234h (VOC-HDR puts 29 11)
+
+- ---------------------------------------------------------------
+
+DATA BLOCK:
+-----------
+
+   Data Block:  TYPE(1-byte), SIZE(3-bytes), INFO(0+ bytes)
+   NOTE: Terminator Block is an exception -- it has only the TYPE byte.
+
+      TYPE   Description     Size (3-byte int)   Info
+      ----   -----------     -----------------   -----------------------
+      00     Terminator      (NONE)              (NONE)
+      01     Sound data      2+length of data    *
+      02     Sound continue  length of data      Voice Data
+      03     Silence         3                   **
+      04     Marker          2                   Marker# (2 bytes)
+      05     ASCII           length of string    null terminated string
+      06     Repeat          2                   Count# (2 bytes)
+      07     End repeat      0                   (NONE)
+      08     Extended        4                   ***
+
+      *Sound Info Format:       **Silence Info Format:
+       ---------------------      ----------------------------
+       00   Sample Rate           00-01  Length of silence - 1
+       01   Compression Type      02     Sample Rate
+       02+  Voice Data
+
+    ***Extended Info Format:
+       ---------------------
+       00-01  Time Constant: Mono: 65536 - (256000000/sample_rate)
+                             Stereo: 65536 - (25600000/(2*sample_rate))
+       02     Pack
+       03     Mode: 0 = mono
+                    1 = stereo
+
+
+  Marker#           -- Driver keeps the most recent marker in a status byte
+  Count#            -- Number of repetitions + 1
+                         Count# may be 1 to FFFE for 0 - FFFD repetitions
+                         or FFFF for endless repetitions
+  Sample Rate       -- SR byte = 256-(1000000/sample_rate)
+  Length of silence -- in units of sampling cycle
+  Compression Type  -- of voice data
+                         8-bits    = 0
+                         4-bits    = 1
+                         2.6-bits  = 2
+                         2-bits    = 3
+                         Multi DAC = 3+(# of channels) [interesting--
+                                       this isn't in the developer's manual]
+
+Detailed description of new data blocks (VOC files version 1.20 and above):
+
+        (Source is fax from Barry Boone at Creative Labs, 405/742-6622)
+
+BLOCK 8 - digitized sound attribute extension, must preceed block 1.
+          Used to define stereo, 8 bit audio
+        BYTE bBlockID;       // = 8
+        BYTE nBlockLen[3];   // 3 byte length
+        WORD wTimeConstant;  // time constant = same as block 1
+        BYTE bPackMethod;    // same as in block 1
+        BYTE bVoiceMode;     // 0-mono, 1-stereo
+
+        Data is stored left, right
+
+BLOCK 9 - data block that supersedes blocks 1 and 8.  
+          Used for stereo, 16 bit.
+
+        BYTE bBlockID;          // = 9
+        BYTE nBlockLen[3];      // length 12 plus length of sound
+        DWORD dwSamplesPerSec;  // samples per second, not time const.
+        BYTE bBitsPerSample;    // e.g., 8 or 16
+        BYTE bChannels;         // 1 for mono, 2 for stereo
+        WORD wFormat;           // see below
+        BYTE reserved[4];       // pad to make block w/o data 
+                                // have a size of 16 bytes
+
+        Valid values of wFormat are:
+
+                0x0000  8-bit unsigned PCM
+                0x0001  Creative 8-bit to 4-bit ADPCM
+                0x0002  Creative 8-bit to 3-bit ADPCM
+                0x0003  Creative 8-bit to 2-bit ADPCM
+                0x0004  16-bit signed PCM
+                0x0006  CCITT a-Law
+                0x0007  CCITT u-Law
+                0x02000 Creative 16-bit to 4-bit ADPCM
+
+        Data is stored left, right
+11.6 RIFF WAVE (.WAV) file format.
+
+RIFF is a format by Microsoft and IBM that is in little-endian byte order. WAVE is RIFF's equivalent of AIFF, and its inclusion in Microsoft Windows 3.1 has made it important to know about.
+
+Rob Ryan was kind enough to send me a description of the RIFF format. Unfortunately, it is too big to include here (27 k), but I've made it available for anonymous ftp at ftp://ftp.cwi.nl/pub/audio/RIFF-format.
+
+Conor Frederick Prischmann <conor@owlnet.rice.edu> points to ftp://ftp.ircam.fr/pub/music/.
+
+The following is a overly simple description of a WAV file and will generally only work when it contains PCM data. This isn't so bad since thats what 90% want to work with.
+
+ 
+WAVe file format (Microsoft)
+----------------------------
+ 
+     Wave files are a part of a file interchange format, called
+     RIFF, created by Microsoft.  The format basically is composed
+     of a collection of data chunks.  Each chunk has a 32-bit Id
+     field, followed by a 32-bit chunk length, followed by the
+     chunk data.  Note that values are in Intel form (ie: big-
+     endian notation).  
+ 
+     The format for a wave file is as follows:
+ 
+     Offset    Description
+     ------    -----------
+      0x00     chunk id 'RIFF'
+      0x04     chunk size (32-bits)
+      0x08     wave chunk id 'WAVE'
+      0x0C     format chunk id 'fmt '
+      0x10     format chunk size (32-bits)
+      0x14     format tag (currently pcm)
+      0x16     number of channels 1=mono, 2=stereo
+      0x18     sample rate in hz
+      0x1C     average bytes per second
+      0x20     number of bytes per sample
+                    1 =  8-bit mono
+                    2 =  8-bit stereo or
+                        16-bit mono
+                    4 = 16-bit stereo
+      0x22     number of bits in a sample
+      0x24     data chunk id 'data'
+      0x28     length of data chunk (32-bits)
+      0x2C     Sample data
+ 
+ 
+     Notes
+     -----
+     
+     1.   Lengths do not include the chunk Id or the length bytes. 
+             e.g.:  if the data length is 1204 then the length of
+                    sample data is 1204 and not 1204-(4+4)
+ 
+     2.   For samples with more than 1 channel, channel 0 data will
+          start and be followed by channel 1 for a given sample
+          then the next sample will follow.  
+             e.g.:  for 8-bit stereo the samples will sample0left,
+                    sample0right, sample1left, sample1right, etc.
+ 
+     3.   8-bit samples are stored in excess-128 notation.  This
+          means that the value 0 is stored as 128, a value 1 is
+          stored as 129, a value of -1 is stored as 127 and so on.
+ 
+     4.   16-bit samples are stored as 2's compliment signed
+          numbers.
+ 
+ 
+     Sample C Structure
+     ------------------
+     
+     typedef unsigned word;
+     typedef unsigned long dword;
+ 
+     struct WAVEheader
+        {
+        char  ckID[4];             /* chunk id 'RIFF'            */
+        dword ckSize;              /* chunk size                 */
+        char  wave_ckID[4];        /* wave chunk id 'WAVE'       */
+        char  fmt_ckID[4];         /* format chunk id 'fmt '     */
+        dword fmt_ckSize;          /* format chunk size          */
+        word  formatTag;           /* format tag currently pcm   */
+        word  nChannels;           /* number of channels         */
+        dword nSamplesPerSec;      /* sample rate in hz          */
+        dword nAvgBytesPerSec;     /* average bytes per second   */
+        word  nBlockAlign;         /* number of bytes per sample */
+        word  nBitsPerSample;      /* number of bits in a sample */
+        char  data_ckID[4];        /* data chunk id 'data'       */
+        dword data_ckSize;         /* length of data chunk       */
+        };
+11.7 u-law and A-law definitions.
+
+[Adapted from information provided by duggan@cc.gatech.edu (Rick Duggan) and davep@zenobia.phys.unsw.EDU.AU (David Perry)]
+
+ 
+u-LAW (really mu-LAW) is
+
+          sgn(m)   (     |m |)       |m |
+   y=    ------- ln( 1+ u|--|)       |--| =< 1
+         ln(1+u)   (     |mp|)       |mp|         
+
+A-law is
+
+     |     A    (m )                 |m |    1
+     |  ------- (--)                 |--| =< - 
+     |  1+ln A  (mp)                 |mp|    A     
+   y=|
+     | sgn(m) (        |m |)    1    |m |
+     | ------ ( 1+ ln A|--|)    - =< |--| =< 1
+     | 1+ln A (        |mp|)    A    |mp|         
+
+Values of u=100 and 255, A=87.6, mp is the Peak message value, m is
+the current quantised message value.  (The formulae get simpler if you
+substitute x for m/mp and sgn(x) for sgn(m); then -1 <= x <= 1.)
+
+Converting from u-law to A-law is in a sense "lossy" since there are
+quantizing errors introduced in the conversion.
+
+"..the u-LAW used in North America and Japan, and the
+A-law used in Europe and the rest of the world and
+international routes.."
+
+References:
+
+Modern Digital and Analog Communication Systems, B.P.Lathi., 2nd ed.
+ISBN 0-03-027933-X
+
+Transmission Systems for Communications
+Fifth Edition
+by Members of the Technical Staff at Bell Telephone Laboratories
+Bell Telephone Laboratories, Incorporated
+Copyright 1959, 1964, 1970, 1982
+
+A note on the resolution of u-law by Frank Klemm <pfk@rz.uni-jena.de>:
+
+8 bit u-law has the same lowest  magnitude like 12 bit linear and 12 bit
+u-law like 16 linear.
+
+Device/Coding   Resolution              Resolution
+                on maximal level        on low level
+ 8 bit linear    8                       8
+ 8 bit ulaw      6                      12      (used for digital telephone)
+12 bit linear   12                      12
+12 bit ulaw     10                      16      (used in DAT/Longplay)
+16 bit linear   16                      16
+
+estimated for some analoge technique:
+tape recorder (HiFi DIN)
+                 8                       9      (no Problem today)
+tape recorder (semiprofessional)
+                10.5                    13.5 
+11.8 AVR File Format.
+
+AVR File Format.
+
+ From: hyc@hanauma.Jpl.Nasa.Gov (Howard Chu)
+
+A lot of PD software exists to play Mac .snd files on the ST. One other
+format that seems pretty popular (used by a number of commercial packages)
+is the AVR format (from Audio Visual Research). This format has a 128 byte
+header that looks like this:
+
+        char magic[4]="2BIT";
+        char name[8];           /* null-padded sample name */
+        short mono;             /* 0 = mono, 0xffff = stereo */
+        short rez;              /* 8 = 8 bit, 16 = 16 bit */
+        short sign;             /* 0 = unsigned, 0xffff = signed */
+        short loop;             /* 0 = no loop, 0xffff = looping sample */
+        short midi;             /* 0xffff = no MIDI note assigned,
+                                   0xffXX = single key note assignment
+                                   0xLLHH = key split, low/hi note */
+        long rate;              /* sample frequency in hertz */
+        long size;              /* sample length in bytes or words (see rez) */
+        long lbeg;              /* offset to start of loop in bytes or words.
+                                   set to zero if unused. */
+        long lend;              /* offset to end of loop in bytes or words.
+                                   set to sample length if unused. */
+        short res1;             /* Reserved, MIDI keyboard split */
+        short res2;             /* Reserved, sample compression */
+        short res3;             /* Reserved */
+        char ext[20];           /* Additional filename space, used
+                                   if (name[7] != 0) */
+        char user[64];          /* User defined. Typically ASCII message. */
+11.9 The Amiga MOD Format.
+
+From: norlin@mailhost.ecn.uoknor.edu (Norman Lin)
+
+MOD files are music files containing 2 parts:
+
+ (1) a bank of digitized samples
+(2) sequencing information describing how and when to play the samples
+MOD files originated on the Amiga, but because of their flexibility and the extremely large number of MOD files available, MOD players are now available for a variety of machines (IBM PC, Mac, Sparc Station, etc.)
+
+The samples in a MOD file are raw, 8 bit, signed, headerless, linear digital data. There may be up to 31 distinct samples in a MOD file, each with a length of up to 128K (though most are much smaller; say, 10K - 60K). An older MOD format only allowed for up to 15 samples in a MOD file; you don't see many of these anymore. There is no standard sampling rate for these samples. [But see below.]
+
+The sequencing information in a MOD file contains 4 tracks of information describing which, when, for how long, and at what frequency samples should be played. This means that a MOD file can have up to 31 distinct (digitized) instrument sounds, with up to 4 playing simultaneously at any given point. This allows a wide variety of orchestrational possibilities, including use of voice samples or creation of one's own instruments (with appropriate sampling hardware/software). The ability to use one's own samples as instruments is a flexibility that other music files/formats do not share, and is one of the reasons MOD files are so popular, numerous, and diverse.
+
+15 instrument MODs, as noted above, are somewhat older than 31 instrument MODs and are not (at least not by me) seen very often anymore. Their format is identical to that of 31 instrument MODs except:
+
+ (1) Since there are only 15 samples, the information for the last (15th)
+    sample starts at byte 440 and goes through byte 469.
+(2) The songlength is at byte 470 (contrast with byte 950 in 31 instrument
+    MOD)
+(3) Byte 471 appears to be ignored, but has been observed to be 127.
+    (Sorry, this is from observation only)
+(4) Byte 472 begins the pattern sequence table (contrast with byte 952
+    in a 31 instrument MOD)
+(5) Patterns start at byte 600 (contrast with byte 1084 in 31 instrument MOD)
+"ProTracker," an Amiga MOD file creator/editor, is available for ftp everywhere as pt??.lzh.
+
+ From: Apollo Wong <apollo@ee.ualberta.ca>
+
+From: M.J.H.Cox@bradford.ac.uk (Mark Cox)
+Newsgroups: alt.sb.programmer
+Subject: Re: Format for MOD files...
+Message-ID: <1992Mar18.103608.4061@bradford.ac.uk>
+Date: 18 Mar 92 10:36:08 GMT
+Organization: University of Bradford, UK
+
+wdc50@DUTS.ccc.amdahl.com (Winthrop D Chan) writes:
+>I'd like to know if anyone has a reference document on the format of the
+>Amiga Sound/NoiseTracker (MOD) files. The author of Modplay said he was going
+>to release such a document sometime last year, but he never did. If anyone
+
+I found this one, which covers it better than I can explain it - if you
+use this in conjunction with the documentation that comes with Norman
+Lin's Modedit program it should pretty much cover it.
+
+Mark J Cox
+
+/***********************************************************************
+
+Protracker 1.1B Song/Module Format:
+-----------------------------------
+
+Offset  Bytes  Description
+------  -----  -----------
+   0     20    Songname. Remember to put trailing null bytes at the end...
+
+Information for sample 1-31:
+
+Offset  Bytes  Description
+------  -----  -----------
+  20     22    Samplename for sample 1. Pad with null bytes.
+  42      2    Samplelength for sample 1. Stored as number of words.
+               Multiply by two to get real sample length in bytes.
+  44      1    Lower four bits are the finetune value, stored as a signed
+               four bit number. The upper four bits are not used, and
+               should be set to zero.
+               Value:  Finetune:
+                 0        0
+                 1       +1
+                 2       +2
+                 3       +3
+                 4       +4
+                 5       +5
+                 6       +6
+                 7       +7
+                 8       -8
+                 9       -7
+                 A       -6
+                 B       -5
+                 C       -4
+                 D       -3
+                 E       -2
+                 F       -1
+
+  45      1    Volume for sample 1. Range is $00-$40, or 0-64 decimal.
+  46      2    Repeat point for sample 1. Stored as number of words offset
+               from start of sample. Multiply by two to get offset in bytes.
+  48      2    Repeat Length for sample 1. Stored as number of words in
+               loop. Multiply by two to get replen in bytes.
+
+Information for the next 30 samples starts here. It's just like the info for
+sample 1.
+
+Offset  Bytes  Description
+------  -----  -----------
+  50     30    Sample 2...
+  80     30    Sample 3...
+   .
+   .
+   .
+ 890     30    Sample 30...
+ 920     30    Sample 31...
+
+Offset  Bytes  Description
+------  -----  -----------
+ 950      1    Songlength. Range is 1-128.
+ 951      1    Well... this little byte here is set to 127, so that old
+               trackers will search through all patterns when loading.
+               Noisetracker uses this byte for restart, but we don't.
+ 952    128    Song positions 0-127. Each hold a number from 0-63 that
+               tells the tracker what pattern to play at that position.
+1080      4    The four letters "M.K." - This is something Mahoney & Kaktus
+               inserted when they increased the number of samples from
+               15 to 31. If it's not there, the module/song uses 15 samples
+               or the text has been removed to make the module harder to
+               rip. Startrekker puts "FLT4" or "FLT8" there instead.
+
+Offset  Bytes  Description
+------  -----  -----------
+1084    1024   Data for pattern 00.
+   .
+   .
+   .
+xxxx  Number of patterns stored is equal to the highest patternnumber
+      in the song position table (at offset 952-1079).
+
+Each note is stored as 4 bytes, and all four notes at each position in
+the pattern are stored after each other.
+
+00 -  chan1  chan2  chan3  chan4
+01 -  chan1  chan2  chan3  chan4
+02 -  chan1  chan2  chan3  chan4
+etc.
+
+Info for each note:
+
+ _____byte 1_____   byte2_    _____byte 3_____   byte4_
+/                \ /      \  /                \ /      \
+0000          0000-00000000  0000          0000-00000000
+
+Upper four    12 bits for    Lower four    Effect command.
+bits of sam-  note period.   bits of sam-
+ple number.                  ple number.
+
+Periodtable for Tuning 0, Normal
+  C-1 to B-1 : 856,808,762,720,678,640,604,570,538,508,480,453
+  C-2 to B-2 : 428,404,381,360,339,320,302,285,269,254,240,226
+  C-3 to B-3 : 214,202,190,180,170,160,151,143,135,127,120,113
+
+To determine what note to show, scan through the table until you find
+the same period as the one stored in byte 1-2. Use the index to look
+up in a notenames table.
+
+This is the data stored in a normal song. A packed song starts with the
+four letters "PACK", but i don't know how the song is packed: You can
+get the source code for the cruncher/decruncher from us if you need it,
+but I don't understand it; I've just ripped it from another tracker...
+
+In a module, all the samples are stored right after the patterndata.
+To determine where a sample starts and stops, you use the sampleinfo
+structures in the beginning of the file (from offset 20). Take a look
+at the mt_init routine in the playroutine, and you'll see just how it
+is done.
+
+Lars "ZAP" Hamre/Amiga Freelancers
+***********************************************************************/
+ 
+-- 
+Mark J Cox -----
+Bradford, UK ---
+
+
+PS: A file with even *much* more info on MOD files, compiled by Lars
+Hamre, is available from ftp.cwi.nl:/pub/audio/MOD-info.  Enjoy!
+11.10 The Sample Vision Format.
+
+The Sample Vision Format.
+
+ From: "tim.dorcas@enest.com" <KURTZ@URIACC.URI.EDU>
+
+First, Sample Vision is a program used by professional musicians to
+send and receive samples via a MIDI interface to the PC. While on the
+PC, you can edit several parameters including loop points, pitch, time
+compression, normalize, sample rate, ect.  The list of supported
+samplers include: AKAI {S700,X700,S900, S950,S612,S1000/1100},
+Casio{FZ1,FZ10M,FZ20M}, Ensoniq{EPS,EPS16,ASR10,Mirage},
+Emu{Emax,EmaxII}, Korg{DSS1,DSM1,T workstation}, Oberheim DPX-1,
+Peavey DPM-3, Roland {S10,MKS100,S220,S50,S330,S550}, Sequential
+Circuits Prophet 2000/2002, Sample Dump Standard devices, Yamaha
+TX16W.
+
+The .smp format breaks down like this:
+
+Offset     Size        Description
+000        18          'SOUND SAMPLE DATA ' ASCII FILE ID
+0018       04          '2.1 '   ASCII FILE VERSION
+0022       60          USER COMMENTS    60 ASCII CHARACTERS
+0082       30          SAMPLE NAME    LEFT JUSTIFIED 30 ASCII CHARACTERS
+0112       04          SAMPLE SIZE   SAMPLE DATA COUNT IN WORDS
+0116       ??          SAMPLE DATA  1 WORD PER SAMPLE, LEAST SIGNIFICANT BYTE
+                                    FIRST, LSW FIRST; SIGNED 16 BIT INTEGERS
+
+??         02(DW)      RESERVED
+??         04(DD)      LOOP 1 START  USE SAMPLE COUNT NOT BYTE COUNT
+??         04(DD)      LOOP 1 END
+??         01(DB)      LOOP 1 TYPE   0=LOOP OFF,1=FORWARD,2=FORWARD/BACKWARD
+??         02(DW)      LOOP 1 COUNT  TIMES TO EXECUTE LOOP BEFORE NEXT LOOP
+
+THERE ARE SEVEN MORE IDENTICAL LOOP STRUCTURES FOR A TOTAL OF 8
+
+??         10          MARKER 1 NAME ASCII MARKER NAME
+??         04(DD)      MARKER 1 POSITION  FFFF MEANS UNUSED
+
+THER ARE SEVEN MORE IDENTICAL MARKER STRUCTURES FOR A TOTAL OF 8
+
+??         01(DB)       MIDI UNITY PLAYBACK NOTE         MIDI NOTE TO PLAY
+                                                         THE SAMPLE AT ITS
+                                                         ORIGINAL PITCH
+??         04(DD)       SAMPLE RATE IN HERTZ
+??         04(DD)       SMPTE OFFSET IN SUBFRAMES
+??         04(DD)       CYCLE SIZE         SAMPLE COUNT IN ONE CYCLE OF
+                                           THE SAMPLED SOUND. -1 IF UNKNOWN
+
+(DD) 4 BYTES, LS BYTE FIRST, LS WORD FIRST
+(DW) 2 BYTES, LS BYTE FIRST
+(DB) 1 BYTE
+
+That's about it. One thing I have noticed is that Sample Vision only
+writes seven loop structures to file as opposed to the eight
+structures it claims are written.
+11.11 Tandy Deskmate .snd Format Notes.
+
+From: Jeffrey L. Hayes <tvdog@delphi.com>
+
+Tandy .snd files are created by Sound.pdm, a program that came with the proprietary DeskMate environment. They are used by Music.pdm to create music modules (.sng files). DeskMate Sound and Music require the Tandy sound chip. There is a program to convert RIFF WAVE and other 8-bit PCM formats to .snd, Conv2snd, by Kenneth Udut. Conv2snd v.2.00 comes with Snd2wav, which converts .snd to RIFF WAVE.
+
+There are two types of DeskMate .snd files, sound files and instrument files. Both contain 8-bit unsigned PCM samples.
+
+Sound files are simpler. These are garden-variety sample files with a fixed-length header giving the name of the sound, the recording frequency, and the length of the sound. Sound files may be recorded at 5500Hz, 11kHz or 22kHz.
+
+Instrument files contain samples as well as frequency and looping information used by Music.pdm to represent an instrument. Instrument files provide for attack, sustain, and decay with several samples having different implied frequencies and being used by Music.pdm to represent the instrument in different pitch ranges. Up to 16 different notes (with 16 different samples) can be contained in one instrument file. Instrument files are always recorded at 11kHz. Both sound files and instrument files may be compressed in one of two ways, "music" compression or "speech" compression, or they may be uncompressed. I don't know the compression algorithms, but simple file comparison reveals that "music" and "speech" compression are almost identical.
+
+The DeskMate .snd file header consists of 16 bytes of fixed header information followed by one or more 28-byte note records. The sample information, which may be compressed, follows the header.
+
+DeskMate .snd File Format - Fixed Header.
+
+DeskMate .snd File Format - Fixed Header.
+
+ 
+  offset    size      what
+  ------    ----      ----
+
+  0         byte      1Ah (.snd ID byte)
+
+  1         byte      Compression code:  0 = no compression; 1 = music
+                      compression; 2 = sound compression.
+
+  2         byte      Number of notes in the instrument file.  1 if sound
+                      file.
+
+  3         byte      Instrument number.  0 if sound file; 0FFh if instrument
+                      file with no number set.  Valid instrument numbers in
+                      an instrument file are 1 to 32.  Use this field to
+                      distinguish a sound file from an instrument file.
+
+  4         10 bytes  Sound or instrument name.  Filled on the right with
+                      nulls if less than 10 characters.
+
+  0Eh       word      Sampling rate in samples per second.  Note that although
+                      a sampling rate other than 5500, 11000 and 22000 can be
+                      entered here, Sound.pdm will not actually play at other
+                      rates.
+
+  10h       variable  Note records begin, 28 bytes each.  Number of records
+                      given in byte 2 above.
+DeskMate .snd File Format - Note Record.
+
+DeskMate .snd File Format - Note Record.
+
+ 
+  0         byte      Pitch of the note:  1 = A1 in American Standard Pitch;
+                      2 = A#1; etc.  A1 is lowest note allowed; highest note
+                      allowed is B6 (3Fh).  Sound files have 0FFh here; so do
+                      instrument files with no note set.
+                          Note that Sound.pdm does not designate notes in the
+                      standard manner to the user.  Although A1 and B6 in
+                      Sound.pdm are the same as A1 and B6 in standard pitch,
+                      Sound.pdm starts octaves at A rather than at C (as is
+                      standard).  Thus, middle C, C4 in standard pitch, is C3
+                      in Sound.pdm.
+
+  1         byte      Sound files, and instrument files with no pitch set,
+                      have 0 here.  If the pitch is set, this byte is 0FFh.
+
+  2         2 bytes   Range of the note, first byte is lower limit, second
+                      is higher limit.  Byte encoding as for offset 0 (i.e.,
+                      01h to 3Fh).  Sound files have FF FF here; so do
+                      instrument files with no range set.
+
+  4         dword     Offset in the file where samples for this note begin
+                      (zero-relative), after compression if that was done.
+
+  8         dword     If compressed, the length of the compressed data in the
+                      file for this note.  Uncompressed files have 0 here.
+
+  0Ch       4 bytes   Unknown.  Set to zero.
+
+  10h       dword     Number of samples in the note, after decompression if
+                      necessary.
+
+  14h       dword     Number of sample at start of sustain region for the
+                      note, relative to the first (zeroth) sample of the note.
+                      For sound files, or if sustain is not set, this field is
+                      0.
+
+  18h       dword     Number of sample at end of sustain region for the note,
+                      relative to the first (zeroth) sample of the note.  For
+                      sound files, or if sustain is not set, this field is 0.
+New Tandy .Snd File Format.
+
+This is the new .snd file format used on the 2500-series. From information provided by John Ball (john.ball@two-t.com).
+
+Like the old format, the new format header consists of a fixed part followed by one or more sample descriptors. The fixed part is 114 bytes; the sample descriptors are 46 bytes each. Samples are still 8-bit unsigned PCM.
+
+ Fixed header:
+    offset       size        what
+      0          10 bytes    ASCIIZ name of sound.
+      0Ah        34 bytes    unknown
+      2Ch        2 bytes     New .snd ID:  1Ah 80h.
+      2Eh        word        Number of samples in file.
+      30h        word        Sound (instrument) number.
+      32h        16 bytes    unknown
+      42h        word        Compression code (0 = no compression, 1 =
+                             music compression, 2 = speech compression).
+      44h        20 bytes    unknown
+      58h        word        Sampling rate in Hz.
+      5Ah        24 bytes    unknown
+      72h        variable    Sample descriptors begin.
+
+Sample descriptors (number given by word at 2Eh above):
+    offset       size        what
+      0          dword       Link to next sample descriptor (offset in file
+                             of next sample descriptor record).  0 if last.
+      4          2 bytes     unknown
+      6          byte        Pitch of note (01h-3Fh), 01 = A1 in American
+                             Standard Pitch; 0FFh if not set.
+      7          byte        unknown (compare old .Snd format; value is 00
+                             or FF, but seemingly unrelated to pitch setting)
+      8          2 bytes     Range of note.  First byte is lower limit,
+                             second is higher limit.  Values as for byte
+                             at offset 6 above; FF FFh if not set.
+      0Ah        dword       Offset in file of start of sound data for
+                             this sample.
+      0Eh        dword       Length of sample sound data in bytes.
+      12h        dword       Uncompressed length of sound data (number of
+                             samples).
+      16h        24 bytes    unknown
+------------------------------------------------------------------------
+11.12 Miscellaneous Formats.
+
+Some Miscellaneous Formats.
+
+ From: bil@ccrma.Stanford.EDU (Bill Schottstaedt)
+
+I thought you might find some of this information amusing -- a few
+header formats I didn't find in your great audio file formats
+documentation.  Some taken from the AFsp sources, or sox, or
+local ancient documentation.  I also have short descriptions
+of BICSF, NeXT/Sun, AIFF, RIFF, SMP, VOC, and so on, plus
+full descriptions of the 2 Sound Designer formats, if you're
+interested.
+
+
+/* ------------------------------------ NIST ---------------------------------
+
+ * 
+
+ *   0: "NIST_1A"
+ *   8: data_location as ASCII representation of integer
+ *      (apparently always "   1024")
+ *  16: start of complicated header -- full details available upon request
+ *
+ *  here's an example:
+ *
+ *  NIST_1A
+ *     1024
+ *  database_id -s5 TIMIT
+ *  database_version -s3 1.0
+ *  utterance_id -s8 aks0_sa1
+ *  channel_count -i 1
+ *  sample_count -i 63488
+ *  sample_rate -i 16000
+ *  sample_min -i -6967
+ *  sample_max -i 7710
+ *  sample_n_bytes -i 2
+ *  sample_byte_format -s2 01
+ *  sample_sig_bits -i 16
+ *  end_head
+ */
+/* ------------------------------------ SNDT ---------------------------------
+ *
+ * this taken from sndrtool.c (sox-10):
+ *   0: "SOUND"
+ *   6: 0x1a
+ *   8-11: 0
+ *  12-15: nsamples
+ *  16-19: 0
+ *  20-23: nsamples
+ *  24-25: srate
+ *  26-27: 0
+ *  28-29: 10
+ *  30-31: 4
+ *  32-> : <filename> "- File created by Sound Exchange"
+ *  .->95: 0
+ */
+/* ------------------------------------ ESPS ---------------------------------
+
+ *
+ *   16: 0x00006a1a or 0x1a6a0000
+ *  136: if not 0, chans + format = 32-bit float
+ *  144: if not 0, chans + format = 16-bit linear
+ * 
+
+ *   from AFgetInfoES.c:
+ * 
+
+ *       Bytes     Type    Contents
+ *      8 -> 11    --     Header size (bytes)
+ *     12 -> 15    int    Sampled data record size
+ *     16 -> 19    int    File identifier
+ *     40 -> 65    char   File creation date
+ *    124 -> 127   int    Number of samples (may indicate zero)
+ *    132 -> 135   int    Number of doubles in a data record
+ *    136 -> 139   int    Number of floats in a data record
+ *    140 -> 143   int    Number of longs in a data record
+ *    144 -> 147   int    Number of shorts in a data record
+ *    148 -> 151   int    Number of chars in a data record
+ *    160 -> 167   char   User name
+ *    333 -> H-1   --     Generic header items, including "record_freq"
+ *                        {followed by a "double8"}
+ *      H -> ...   --     Audio data
+ */
+/* ------------------------------------ INRS ---------------------------------
+
+ * 
+
+ *   from AFgetInfoIN.c:
+ * 
+
+ *    INRS-Telecommunications audio file:
+ *       Bytes     Type    Contents
+ *      0 ->  3    float  Sampling Frequency (VAX float format)
+ *      6 -> 25    char   Creation time (e.g. Jun 12 16:52:50 1990)
+ *     26 -> 29    int    Number of speech samples in the file
+ *   The data in an INRS-Telecommunications audio file is in 16-bit integer
+ *   format.
+ * 
+
+ */
+/* old Mus10, SAM formats, just for completeness
+ *
+ * These were used for sound data on the PDP-10s at SAIL and CCRMA in the
+ * 70's and 80's.
+ * The word length was 36-bits.
+ *
+ * "New" format as used by nearly all CCRMA software pre-1990:
+ *
+ *  WD 0 - '525252525252
+ *  WD 1 - Clock rate in Hz (PDP-10 36-bit floating point)
+ *  WD 2 - #samples per word,,pack-code
+ *      (has # samples per word in LH, pack-code in RH)
+ *      0 for 12-bit fixed point
+ *      1 for 18-bit fixed point
+ *      2 for  9-bit floating point incremental
+ *      3 for 36-bit floating point
+ *      4 for 16-bit sambox fixed point, right justified
+ *      5 for 20-bit sambox fixed point
+ *      6 for 20-bit right-adjusted fixed point (sambox SAT format)
+ *      7 for 16-bit fixed point, left justified
+ *      N>9 for N bit bytes in ILDB format
+ *  WD 3 - # channels
+ *      1 for MONO
+ *      2 for STEREO
+ *      4 for QUAD
+ *  WD 4 - Maximum amplitude (if known)
+ *      is a floating point number
+ *      is zero if not known
+ *      is maximum magnitude (abs value) of signal
+ *  WD 5        number of Sambox ticks per pass
+ *              (inverse of Sambox clock rate, sort of)
+ *  WD 6 - Total #samples in file.
+ *         If 0 then #wds_in_file*#samps_per_wd assumed.
+ *  WD 7 - Block size (if any). 0 means sound is not blocked.
+ *  WDs '10-'77 Reserved for EDSND usage
+ *  WDs '100-'177 Text description of file (in ASCIZ format)
+ *
+ *
+ * "Old" format
+ *
+ *  WD 0 - '525252525252
+ *  WD 1 - Clock rate
+ *      has code in LH, actual INTEGER rate in RH
+ *      code=0 for 6.4Kc (or anything else)
+ *          =1 for 12.8Kc, =2 for 25.6Kc, =3 for 51.2Kc
+ *          =5 for 102.4Kc, =6 for 204.8Kc
+ *  WD 2 - pack
+ *      0 for 12 bit
+ *      1 for 16 bit (18 bit)
+ *      2 for 9 bit floating point incremental
+ *      3 for 36-bit floating point
+ *      N>9 for N bit bytes in ILDB format
+ *      has # samples per word in LH.
+ *  WD 3 - # channels
+ *      1 for MONO
+ *      2 for STEREO
+ *      4 for QUAD
+ *  WD 4 - Maximum amplitude (if known)
+ *      is a floating point number
+ *      is zero if not known
+ *      is maximum magnitude (abs value) of signal
+ *  WDs 5-77 Reserved for future expansion
+ *  WDs 100-177 Text description of file (in ASCIZ format)
+ */
+Next Previous Contents
