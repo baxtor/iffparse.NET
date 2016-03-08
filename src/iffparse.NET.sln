@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListTest", "iffparse.NET.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iffparse.NET", "iffparse.NET\iffparse.NET.csproj", "{803D7AC1-111E-473C-8A16-46557ABAEC2D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".FAKE", ".FAKE", "{5A568C82-D3D6-4FA5-8609-8BD58A7E7A96}"
+	ProjectSection(SolutionItems) = preProject
+		..\build.fsx = ..\build.fsx
+		..\build.sh = ..\build.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AppStore|Any CPU = AppStore|Any CPU
@@ -55,24 +61,6 @@ Global
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|x86.ActiveCfg = Release|Any CPU
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|x86.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|Any CPU.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|x86.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.AppStore|x86.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Debug|x86.Build.0 = Debug|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|x86.ActiveCfg = Release|Any CPU
-		{22FBDA45-E8CF-4123-95C1-63895A02F736}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{22FBDA45-E8CF-4123-95C1-63895A02F736} = {3B069C78-78DD-4FB4-AAE5-9AE7C9A729C0}
