@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-using Net.Iffparse;
+using IffParse.Lists;
 
 namespace ListTest
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Net.Iffparse
+namespace IffParse
 {
 	internal static class BitOperationExtension
 	{

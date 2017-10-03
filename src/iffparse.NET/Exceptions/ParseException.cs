@@ -1,6 +1,6 @@
 using System;
 
-namespace net.iffparse.parser
+namespace IffParse.Exceptions
 {
 	/// <summary>
 	/// Parse exception.
@@ -8,13 +8,13 @@ namespace net.iffparse.parser
 	public class ParseException : Exception
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="iffparse.NET.ParseException"/> class.
+		/// Initializes a new instance of the <see cref="ParseException"/> class.
 		/// </summary>
 		public ParseException () : base()
 		{
 		}
 		/// <summary>
-		/// Initializes a new instance of the <see cref="iffparse.NET.ParseException"/> class.
+		/// Initializes a new instance of the <see cref="ParseException"/> class.
 		/// </summary>
 		/// <param name="message">Message.</param>
 		public ParseException (string message) : base(message)

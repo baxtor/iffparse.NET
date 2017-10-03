@@ -1,20 +1,32 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-namespace Net.Iffparse.Marshaling
+namespace IffParse.Marshaling
 {
-	[CLSCompliant(true)]
+	/// <summary>
+	/// Marshaling
+	/// </summary>
 	public static class Marshal
 	{
+		/// <summary>
+		/// Determines the size of {T}.
+		/// </summary>
+		/// <returns>The size of {T}.</returns>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static int SizeOf<T>()
 		{
 			return SizeOf (typeof(T));
 		}
 
+		/// <summary>
+		/// Determines the size of a type 
+		/// </summary>
+		/// <returns>The size of Type.</returns>
+		/// <param name="t">T.</param>
 		public static int SizeOf(Type t)
 		{
 			if (t == null)
@@ -52,6 +64,12 @@ namespace Net.Iffparse.Marshaling
 			return tmi.Size;
 		}
 
+		/// <summary>
+		/// Bytes to struct.
+		/// </summary>
+		/// <returns>The to struct.</returns>
+		/// <param name="buffer">Buffer.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static T BytesToStruct<T>(byte[] buffer) where T : struct
 		{
 			// 1. through reflection get Marshal.StructLayout Attribute
@@ -81,6 +99,12 @@ namespace Net.Iffparse.Marshaling
 			return default(T);
 		}
 
+		/// <summary>
+		/// Structs to bytes.
+		/// </summary>
+		/// <returns>The to bytes.</returns>
+		/// <param name="structType">Struct type.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static byte[] StructToBytes<T>(T structType) where T : struct
 		{
 			// see BytesToStruct in reverse order

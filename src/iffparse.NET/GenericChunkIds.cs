@@ -1,20 +1,57 @@
-﻿using System;
+﻿using IffParse.Lists;
+using IffParse.Util;
 
-namespace Net.Iffparse
+namespace IffParse
 {
-	public static class GenericChunkIds
+	/// <summary>
+    /// Helper class for chunk id's 
+    /// </summary>
+    public static class GenericChunkIds
 	{
-		public static readonly uint CI_COLLECTIONCHUNK = IFFUtility.MakeId('c', 'o', 'l', 'l');
-		public static readonly uint CI_ENTRYHANDLER = IFFUtility.MakeId('e', 'n', 'h', 'd');
-		public static readonly uint CI_EXITHANDLER = IFFUtility.MakeId('e', 'x', 'h', 'd');
-		public static readonly uint CI_PROPCHUNK = IFFUtility.MakeId('p', 'r', 'o', 'p');
-		public static readonly uint ID_CAT = IFFUtility.MakeId('C', 'A', 'T', ' ');
-		public static readonly uint ID_FORM = IFFUtility.MakeId('F', 'O', 'R', 'M');
-		public static readonly uint ID_LIST = IFFUtility.MakeId('L', 'I', 'S', 'T');
-		public static readonly uint ID_NULL = IFFUtility.MakeId(' ', ' ', ' ', ' ');
-		public static readonly uint ID_PROP = IFFUtility.MakeId('P', 'R', 'O', 'P');
-		internal static readonly uint ID_CONTAINER = IFFUtility.MakeId('\0', '\0', '\0', '{');
-		internal static readonly uint ID_PAD = IFFUtility.MakeId('!', 'P', 'A', 'D');
+		/// <summary>
+        /// Collection chunk identifier for <see cref="ContextInfoNode"/>
+        /// </summary>
+		public static readonly uint CI_COLLECTIONCHUNK = IdUtility.MakeId('c', 'o', 'l', 'l');
+		/// <summary>
+        /// Entry handler identifier for <see cref="ContextInfoNode"/>
+        /// </summary>
+		public static readonly uint CI_ENTRYHANDLER = IdUtility.MakeId('e', 'n', 'h', 'd');
+		/// <summary>
+        /// Exit handler identifier for <see cref="ContextInfoNode"/>
+        /// </summary>
+		public static readonly uint CI_EXITHANDLER = IdUtility.MakeId('e', 'x', 'h', 'd');
+		/// <summary>
+        /// Property chunk identifier for <see cref="ContextInfoNode"/>
+        /// </summary>
+		public static readonly uint CI_PROPCHUNK = IdUtility.MakeId('p', 'r', 'o', 'p');
+		/// <summary>
+        /// Entry handler identifier for <see cref="ContextInfoNode"/>
+        /// </summary>
+		public static readonly uint ID_CAT = IdUtility.MakeId('C', 'A', 'T', ' ');
+		/// <summary>
+        /// Form chunk identifier
+        /// </summary>
+		public static readonly uint ID_FORM = IdUtility.MakeId('F', 'O', 'R', 'M');
+		/// <summary>
+        /// List chunk identifier
+        /// </summary>
+		public static readonly uint ID_LIST = IdUtility.MakeId('L', 'I', 'S', 'T');
+		/// <summary>
+        /// NULL chunk identifier
+        /// </summary>
+		public static readonly uint ID_NULL = IdUtility.MakeId(' ', ' ', ' ', ' ');
+		/// <summary>
+        /// Property chunk identifier
+        /// </summary>
+		public static readonly uint ID_PROP = IdUtility.MakeId('P', 'R', 'O', 'P');
+		/// <summary>
+        /// Container chunk identifier
+        /// </summary>
+		internal static readonly uint ID_CONTAINER = IdUtility.MakeId('\0', '\0', '\0', '{');
+		/// <summary>
+        /// Padding chunk identifier
+        /// </summary>
+		internal static readonly uint ID_PAD = IdUtility.MakeId('!', 'P', 'A', 'D');
 	}
 }
 

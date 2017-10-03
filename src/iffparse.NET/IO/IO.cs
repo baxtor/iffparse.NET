@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Net.Iffparse
+namespace IffParse.IO
 {
 	internal delegate Stream IFFOpenCallback(string openKey, bool writeMode);
 	internal delegate Int32 IFFCloseCallback(Stream stream);

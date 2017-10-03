@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace Net.Iffparse
+namespace IffParse.Lists
 {
+	/// <summary>
+	/// Node.
+	/// </summary>
 	public class Node : MinNode
 	{
 		private bool disposed = false;
@@ -16,6 +19,10 @@ namespace Net.Iffparse
 			set;
 		}
 
+		/// <summary>
+		/// Gets or sets the pri.
+		/// </summary>
+		/// <value>The pri.</value>
 		public SByte Pri {
 			get;
 			set;
@@ -29,6 +36,11 @@ namespace Net.Iffparse
 			set;
 		}
 
+		/// <summary>
+		/// Dispose the specified <see cref="Node"/>.
+		/// </summary>
+		/// <returns>The dispose.</returns>
+		/// <param name="disposing">If set to <c>true</c> disposing.</param>
 		protected override void Dispose(bool disposing)
 		{
 			if (!disposed) {
@@ -41,6 +53,10 @@ namespace Net.Iffparse
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="T:IffParse.Lists.Node"/> is
+		/// reclaimed by garbage collection.
+		/// </summary>
 		~Node() 
 		{
 			Dispose(false);

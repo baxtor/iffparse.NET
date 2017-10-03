@@ -1,8 +1,9 @@
-﻿using System;
-
-namespace Net.Iffparse
+﻿namespace IffParse.Parser
 {
-	public enum ParserStatus  
+	/// <summary>
+	/// Parser status.
+	/// </summary>
+	public enum ParserStatus : sbyte
 	{
 		/// <summary>
 		/// Operation not supported at this time.

@@ -12,9 +12,13 @@
 
 using System;
 using System.IO;
-using Net.Iffparse.Marshaling;
+using IffParse.Chunks;
+using IffParse.IO;
+using IffParse.Lists;
+using IffParse.Marshaling;
+using IffParse.Util;
 
-namespace Net.Iffparse
+namespace IffParse.Parser
 {
 	/// <summary>
 	/// IFF callback.
@@ -22,7 +26,7 @@ namespace Net.Iffparse
 	public delegate int IFFCallBack(IFFParser iff, object userData);
 
 	/// <summary>
-	/// IFF parser.
+	/// IFF file parser.
 	/// </summary>
 	public class IFFParser : IDisposable
 	{
@@ -40,23 +44,23 @@ namespace Net.Iffparse
 		private bool _writeMode = false;
 
 		#endregion
-		
+
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Net.Iffparse.IFFParser"/> class.
+		/// Initializes a new instance of the <see cref="IFFParser"/> class.
 		/// </summary>
 		/// <param name="stream">Stream.</param>
 		/// <param name="writeMode">If set to <c>true</c> write mode.</param>
-		public IFFParser(Stream stream, bool writeMode)
-			: this(new IFFIOCallbacks
-				{
-					Close = StreamClose,
-					Open = (k,w) => stream,
-					Read = StreamRead,
-					Seek = StreamSeek,
-					Write = StreamWrite
-				},string.Empty, writeMode)
+		/// <exception cref="T:System.ArgumentNullException"></exception>
+		public IFFParser (Stream stream, bool writeMode)
+					: this (new IFFIOCallbacks {
+						Close = StreamClose,
+						Open = (k, w) => stream,
+						Read = StreamRead,
+						Seek = StreamSeek,
+						Write = StreamWrite
+					}, string.Empty, writeMode)
 		{
 			if (stream == null) {
 				throw new ArgumentNullException ("stream");
@@ -496,7 +500,7 @@ namespace Net.Iffparse
 			if (top == null) {
 				return (int)ParserStatus.EndOfFile;
 			}
-			if (IFFUtility.IsGenericId (top.Id)) {
+			if (IdUtility.IsGenericId (top.Id)) {
 				return (int)ParserStatus.NotIFF;
 			}
 			return WriteChunkInternal (top, buffer, offset, count);
@@ -658,7 +662,7 @@ namespace Net.Iffparse
 			}
 
 			topId = top.Id;
-			if (IFFUtility.IsGenericId (topId) || IsContainerId (topId)) {
+			if (IdUtility.IsGenericId (topId) || IsContainerId (topId)) {
 				/* If inside a generic chunk, and not exhausted, push a subchunk. */
 				if (top.Offset < top.Size) {
 					err = PushChunkRead (false);
@@ -671,7 +675,7 @@ namespace Net.Iffparse
 					/* If non-generic, we're done, but if the containing chunk is not
 					* FORM or PROP, it's an IFF syntax error.
 					*/
-					if (!IFFUtility.IsGenericId (top.Id)) {
+					if (!IdUtility.IsGenericId (top.Id)) {
 						if ((topId != GenericChunkIds.ID_FORM) &&
 						    (topId != GenericChunkIds.ID_PROP) &&
 						    (!IsContainerId (topId)))
@@ -960,7 +964,7 @@ namespace Net.Iffparse
 				if (chunk.Size > (top.Size - top.Offset))
 					return (int)ParserStatus.Mangled;
 			}
-			if (IFFUtility.IsGoodId (chunk.Id)) {
+			if (IdUtility.IsGoodId (chunk.Id)) {
 				try {
 					var contextNode = new ContextNode (chunk.Id, type);
 					contextNode.Size = chunk.Size;
@@ -1005,10 +1009,10 @@ namespace Net.Iffparse
 			} else {
 				return (int)ParserStatus.EndOfFile;
 			}
-			if (!IFFUtility.IsGoodId (id)) {
+			if (!IdUtility.IsGoodId (id)) {
 				return (int)ParserStatus.SyntaxError;
 			}
-			if (IFFUtility.IsGenericId (id)) {
+			if (IdUtility.IsGenericId (id)) {
 				if (id == GenericChunkIds.ID_PROP) {
 					/* the containing context for PROP must be a LIST */
 					if (cn.Id != GenericChunkIds.ID_LIST) {
@@ -1016,7 +1020,7 @@ namespace Net.Iffparse
 					}
 				}
 				/* Generic ID.  Check the validity of its subtype. */
-				if (!IFFUtility.IsGoodType (type)) {
+				if (!IdUtility.IsGoodType (type)) {
 					return (int)ParserStatus.NotIFF;
 				}
 			} else {
@@ -1069,8 +1073,8 @@ namespace Net.Iffparse
 			/* For generic chunks, write the type out now that
 			 * the chunk context node is initialized.
 			 */
-			if (IFFUtility.IsGenericId (id) || IsContainerId (id)) {
-				if (IFFUtility.IsGenericId (id)) {
+			if (IdUtility.IsGenericId (id) || IsContainerId (id)) {
+				if (IdUtility.IsGenericId (id)) {
 					var bigEndianType = type;
 					Swap (ref bigEndianType);
 					buffer = BitConverter.GetBytes (bigEndianType);
@@ -1097,7 +1101,7 @@ namespace Net.Iffparse
 				Swap(ref type);
 				top.Type = type;
 				if (result == sizeof(uint)) {
-					if (IFFUtility.IsGoodType(top.Type)) {
+					if (IdUtility.IsGoodType(top.Type)) {
 						return 0;
 					}
 					return (int)ParserStatus.Mangled;
@@ -1169,7 +1173,7 @@ namespace Net.Iffparse
 			return stream.Seek(position, SeekOrigin.Current);
 		}
 
-		static void Swap(ref uint size)
+		private void Swap(ref uint size)
 		{
 			var buffer = BitConverter.GetBytes(size);
 			if (BitConverter.IsLittleEndian)
@@ -1179,7 +1183,7 @@ namespace Net.Iffparse
 			size = BitConverter.ToUInt32(buffer, 0);
 		}
 
-		static void Swap(ref ulong size)
+		private void Swap(ref ulong size)
 		{
 			var buffer = BitConverter.GetBytes(size);
 			if (BitConverter.IsLittleEndian)
@@ -1203,12 +1207,12 @@ namespace Net.Iffparse
 		#region IDisposable implementation
 
 		/// <summary>
-		/// Releases all resource used by the <see cref="Net.Iffparse.IFFParser"/> object.
+		/// Releases all resource used by the <see cref="IFFParser"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="Net.Iffparse.IFFParser"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="Net.Iffparse.IFFParser"/> in an unusable state. After calling
-		/// <see cref="Dispose"/>, you must release all references to the <see cref="Net.Iffparse.IFFParser"/> so the garbage
-		/// collector can reclaim the memory that the <see cref="Net.Iffparse.IFFParser"/> was occupying.</remarks>
+		/// <remarks>Call <see cref="M:IFFParser.Dispose"/> when you are finished using the <see cref="IFFParser"/>. The
+		/// <see cref="M:IFFParser.Dispose"/> method leaves the <see cref="IFFParser"/> in an unusable state. After calling
+		/// <see cref="M:IFFParser.Dispose"/>, you must release all references to the <see cref="IFFParser"/> so the garbage
+		/// collector can reclaim the memory that the <see cref="IFFParser"/> was occupying.</remarks>
 		public void Dispose()
 		{
 			Dispose(true);
@@ -1216,7 +1220,7 @@ namespace Net.Iffparse
 		}
 
 		/// <summary>
-		/// Dispose the specified disposing.
+		/// Dispose the <see cref="IFFParser"/>.
 		/// </summary>
 		/// <param name="disposing">If set to <c>true</c> disposing.</param>
 		protected virtual void Dispose(bool disposing)
@@ -1257,7 +1261,7 @@ namespace Net.Iffparse
 		#region Destructor
 
 		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="Net.Iffparse.IFFParser"/>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="IFFParser"/>
 		/// is reclaimed by garbage collection.
 		/// </summary>
 		~IFFParser()

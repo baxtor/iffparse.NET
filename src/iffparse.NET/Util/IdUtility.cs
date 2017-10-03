@@ -1,8 +1,11 @@
 ﻿using System;
 
-namespace Net.Iffparse
+namespace IffParse.Util
 {
-	public static class IFFUtility
+	/// <summary>
+	/// IFF Identifier utility.
+	/// </summary>
+	public static class IdUtility
 	{
 		/// <summary>
 		/// Identifiers to string.

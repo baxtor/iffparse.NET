@@ -1,7 +1,5 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
@@ -12,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Andreas Beck")]
 [assembly: AssemblyProduct("iffparse.NET")]
-[assembly: AssemblyCopyright("Copyright © Andreas Beck 2012")]
+[assembly: AssemblyCopyright("Copyright © Andreas Beck 2012 - 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,7 +27,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.1.*")]
 [assembly: AssemblyFileVersion("0.1.0.0")]
 
-[assembly: CLSCompliant(true)]
-
 // for unit tests
-[assembly: InternalsVisibleTo( "ListTest" )] 
+[assembly: InternalsVisibleTo("ListTest")]
+

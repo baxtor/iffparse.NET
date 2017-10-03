@@ -13,7 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".FAKE", ".FAKE", "{5A568C82
 	ProjectSection(SolutionItems) = preProject
 		..\build.fsx = ..\build.fsx
 		..\build.sh = ..\build.sh
+		..\build.cmd = ..\build.cmd
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckTests", "iffparse.NET.Tests\CheckTests\CheckTests.csproj", "{C356707B-AC1B-4500-9217-F6C26E0327A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,18 +64,33 @@ Global
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|x86.ActiveCfg = Release|Any CPU
 		{803D7AC1-111E-473C-8A16-46557ABAEC2D}.Release|x86.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.AppStore|x86.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Debug|x86.Build.0 = Debug|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|x86.ActiveCfg = Release|Any CPU
+		{C356707B-AC1B-4500-9217-F6C26E0327A4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{22FBDA45-E8CF-4123-95C1-63895A02F736} = {3B069C78-78DD-4FB4-AAE5-9AE7C9A729C0}
+		{C356707B-AC1B-4500-9217-F6C26E0327A4} = {3B069C78-78DD-4FB4-AAE5-9AE7C9A729C0}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.TextStylePolicy = $1
-		$1.FileWidth = 120
-		$1.TabsToSpaces = False
 		$1.EolMarker = Unix
-		$1.inheritsSet = VisualStudio
-		$1.inheritsScope = text/plain
 		$1.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $2
 		$2.IndentSwitchBody = True
@@ -81,12 +99,25 @@ Global
 		$2.BeforeConstructorDeclarationParentheses = False
 		$2.BeforeDelegateDeclarationParentheses = False
 		$2.NewParentheses = False
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
+		$2.IndentSwitchSection = False
+		$2.NewLinesForBracesInProperties = False
+		$2.NewLinesForBracesInAccessors = False
+		$2.NewLinesForBracesInAnonymousMethods = False
+		$2.NewLinesForBracesInControlBlocks = False
+		$2.NewLinesForBracesInAnonymousTypes = False
+		$2.NewLinesForBracesInObjectCollectionArrayInitializers = False
+		$2.NewLinesForBracesInLambdaExpressionBody = False
+		$2.NewLineForElse = False
+		$2.NewLineForCatch = False
+		$2.NewLineForFinally = False
+		$2.NewLineForMembersInObjectInit = False
+		$2.NewLineForMembersInAnonymousTypes = False
+		$2.NewLineForClausesInQuery = False
+		$2.SpacingAfterMethodDeclarationName = True
+		$2.SpaceAfterMethodCallName = True
+		$2.SpaceBeforeOpenSquareBracket = True
 		$0.StandardHeader = $3
-		$3.Text = 
-		$3.IncludeInNewFiles = True
 		$0.NameConventionPolicy = $4
 		$4.Rules = $5
 		$5.NamingRule = $6
