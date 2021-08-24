@@ -9,13 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListTest", "iffparse.NET.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iffparse.NET", "iffparse.NET\iffparse.NET.csproj", "{803D7AC1-111E-473C-8A16-46557ABAEC2D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".FAKE", ".FAKE", "{5A568C82-D3D6-4FA5-8609-8BD58A7E7A96}"
-	ProjectSection(SolutionItems) = preProject
-		..\build.fsx = ..\build.fsx
-		..\build.sh = ..\build.sh
-		..\build.cmd = ..\build.cmd
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckTests", "iffparse.NET.Tests\CheckTests\CheckTests.csproj", "{C356707B-AC1B-4500-9217-F6C26E0327A4}"
 EndProject
 Global

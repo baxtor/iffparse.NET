@@ -6,3 +6,4 @@ riderModule.iml
 .[iI]dea/
 src/.nuget/
 src/packages/
+*.[dD]ot[sS]ettings.user

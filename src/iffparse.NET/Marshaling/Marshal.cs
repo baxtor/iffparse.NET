@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+// ReSharper disable All
 
 namespace IffParse.Marshaling
 {
@@ -208,7 +209,7 @@ namespace IffParse.Marshaling
 		private static MemberInfoNode GetStructTree(Type t)
 		{
 			if (t == null)
-				throw new ArgumentNullException ("t");
+				throw new ArgumentNullException (nameof(t));
 			
 			var ti = t.GetTypeInfo ();
 
@@ -239,7 +240,6 @@ namespace IffParse.Marshaling
 					childInfo.Size = size;
 					memberTree.Children.Add (childInfo);
 					offset += size;
-
 				}
 			}
 
@@ -255,7 +255,7 @@ namespace IffParse.Marshaling
 		{
 			public MemberInfoNode ()
 			{
-				Children = new System.Collections.Generic.List<MemberInfoNode>();
+				Children = new List<MemberInfoNode>();
 			}
 
 			public MemberInfoNode Parent {

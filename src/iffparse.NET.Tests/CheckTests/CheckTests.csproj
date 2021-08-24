@@ -1,55 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C356707B-AC1B-4500-9217-F6C26E0327A4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>CheckTests</RootNamespace>
-    <AssemblyName>CheckTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.3.7.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IFFCheck.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="castle.vox">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Angel.anim">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="sample.lbm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\iffparse.NET\iffparse.NET.csproj">
-      <Project>{803D7AC1-111E-473C-8A16-46557ABAEC2D}</Project>
-      <Name>iffparse.NET</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup>
+  <TargetFramework>netcoreapp3.1</TargetFramework>
+  <IsPackable>false</IsPackable>
+</PropertyGroup>
+<ItemGroup>
+  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+  <PackageReference Include="nunit" Version="3.7.0" />
+  <PackageReference Include="NUnit3TestAdapter" Version="3.7.0" />
+</ItemGroup>
+<ItemGroup>
+  <None Include="castle.vox">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Include="Angel.anim">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Include="sample.lbm">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+<ItemGroup>
+  <ProjectReference Include="..\..\iffparse.NET\iffparse.NET.csproj" />
+</ItemGroup>
 </Project>

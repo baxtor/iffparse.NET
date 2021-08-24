@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
-using System;
-using IffParse.Lists;
+﻿using IffParse.Lists;
+using NUnit.Framework;
 
 namespace ListTest
 {
-	[TestFixture()]
+	[TestFixture]
 	public class ListTest
 	{
-		[Test()]
+		[Test]
 		public void CreateList()
 		{
 			var list = new List<Node>();
