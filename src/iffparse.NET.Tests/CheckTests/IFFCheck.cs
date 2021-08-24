@@ -42,9 +42,13 @@ namespace CheckTests
 		[Test ()]
 		public void Check ()
 		{
-			CheckInternal (IFF_file,
-			  (error) => Assert.That (error == (int)ParserStatus.EndOfFile, "File scan aborted, error {0}: {1}", error, errormsgs [-error - 1])
-			   );
+			CheckInternal(IFF_file,
+				error => Assert.That(
+					error == (int) ParserStatus.EndOfFile,
+					"File scan aborted, error {0}: {1}",
+					error,
+					errormsgs[-error - 1])
+			);
 		}
 
 		private void CheckInternal(string fileName, Action<int> assertAction)
